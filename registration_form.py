@@ -1,5 +1,5 @@
 from PySide2.QtWidgets import QApplication, QWidget, QVBoxLayout, QLineEdit, QPushButton
-import json
+import json, os
 
 
 class RegistrationForm(QWidget):
@@ -30,6 +30,9 @@ class RegistrationForm(QWidget):
         save_button = QPushButton("Save")
         save_button.clicked.connect(self.button_clicked)
         root_layout.addWidget(save_button)
+
+        # load user data if exists
+        self.load_data()
     
     def button_clicked(self):
         name = self.name_field.text()
@@ -45,6 +48,7 @@ class RegistrationForm(QWidget):
         }
 
         self.save_data(user_data)
+        
         self.name_field.clear()
         self.phone_field.clear()
         self.email_field.clear()
@@ -53,6 +57,16 @@ class RegistrationForm(QWidget):
     def save_data(self, user_data):
         with open("user_data.json", "w") as f:
             json.dump(user_data, f)
+
+    def load_data(self):
+        if os.path.exists("user_data.json"):
+            with open("user_data.json") as f:
+                user_data = json.load(f)
+                
+                self.name_field.setText(user_data["name"])
+                self.email_field.setText(user_data["email"])
+                self.phone_field.setText(user_data["phone"])
+                self.address_field.setText(user_data["address"])
 
 app = QApplication([])
 window = RegistrationForm()
